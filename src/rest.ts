@@ -239,6 +239,12 @@ export function handleRest(
   }
 
   // ---- git refs -------------------------------------------------------------------------------
+  if (rest[0] === 'git' && rest[1] === 'refs' && rest.length === 2 && method === 'GET') {
+    const all = [...repo.refs.entries()]
+      .sort(([a], [b]) => (a < b ? -1 : 1))
+      .map(([ref, sha]) => ({ ref, object: { sha, type: getObject(sha)?.type ?? 'commit' } }));
+    return { status: 200, body: all };
+  }
   if (rest[0] === 'git' && rest[1] === 'refs' && rest.length === 2 && method === 'POST') {
     const ref = str(bodyObj.ref);
     const sha = str(bodyObj.sha);
